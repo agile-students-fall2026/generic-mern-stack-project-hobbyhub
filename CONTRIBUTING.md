@@ -1,3 +1,16 @@
-# Guide to Contributing
+# Team Norms
+https://github.com/nyu-software-engineering/scrum-framework/blob/main/team-norms.md
 
-Delete the contents of this file and replace with the contents of a proper guide to contributing to this project, as described in the [instructions](./instructions-0c-project-setup#contributingmd)
+description as per above
+
+# Git Workflow
+the Git workflow that the team follows
+
+# Rules of Contributing
+a detailed description of the rules of contributing and any considerations or how and what to contribute
+
+# Setting Up Local Development Environment
+instructions for setting up the local development environment in order to work on this project
+
+# Instructions for Building and Testing
+will be updated soon.
