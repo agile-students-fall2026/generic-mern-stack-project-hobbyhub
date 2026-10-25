@@ -2,7 +2,6 @@
 For people who want to find others who share their hobbies, HobbyHub is a mobile web app that helps users discover hobby communities, follow people and groups they care about, and find live hobby events happening near them. Unlike general-purpose social media, HobbyHub is organized entirely around shared interests, so it's easy to go from "I'm into this" to meeting people who are too.
 
 # Team Members (and their usernames)
-Lokeswar Gopikrishna - KStormC
 - [Lokeswar Gopikrishna](https://github.com/KStormC)
 - [Tia Mathur](https://github.com/tiamathur)
 - [Sally [last name](https://github.com/[sally-username])
