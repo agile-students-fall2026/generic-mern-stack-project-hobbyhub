@@ -4,8 +4,8 @@ For people who want to find others who share their hobbies, HobbyHub is a mobile
 # Team Members (and their usernames)
 - [Lokeswar Gopikrishna](https://github.com/KStormC)
 - [Tia Mathur](https://github.com/tiamathur)
-- [Sally [last name](https://github.com/[sally-username])
-- [Mya Pyke](https://github.com/[mya-username])
+- [Sally Hegab](https://github.com/sallyhegab)
+- [Mya Pyke](https://github.com/myapyke123)
 
 # Project Origins
 HobbyHub started as our team's semester project for NYU's Agile Software Development & DevOps course. We noticed that people often struggle to find others nearby who share their niche interests, and existing social apps bury hobby content under everything else. HobbyHub is our attempt at a space built just for that.
