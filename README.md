@@ -1,5 +1,7 @@
 # Product Vision Statement
-For people who want to find others who share their hobbies, HobbyHub is a mobile web app that helps users discover hobby communities, follow people and groups they care about, and find live hobby events happening near them. Unlike general-purpose social media, HobbyHub is organized entirely around shared interests, so it's easy to go from "I'm into this" to meeting people who are too.
+For people who want to find others who share their hobbies, HobbyHub is a mobile web app that helps users discover hobby communities, follow people and groups they care about, and find live hobby events happening near them. The app is designed around a personalized, interactive experience, with connected features that let users move easily between discovering hobbies, viewing profiles, messaging others, and exploring nearby events based on their passions. Unlike general-purpose social media, HobbyHub is organized entirely around shared interests, so it's easy to go from "I'm into this" to meeting people who are too.
+
+
 
 # Team Members (and their usernames)
 - [Lokeswar Gopikrishna](https://github.com/KStormC)
