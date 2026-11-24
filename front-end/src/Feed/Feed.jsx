@@ -3,18 +3,22 @@ import { useEffect, useState } from "react"
 import "./Feed.css"
 import { Link } from "react-router-dom"
 
-
-
 function Feed() {
 
   const [posts, setPosts] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
 
-useEffect(() => {
-  fetch("http://localhost:3000/api/posts")
-    .then((response) => response.json())
-    .then((data) => setPosts(data))
-    .catch((error) => console.error("Error loading posts:", error))
-}, [])
+  useEffect(() => {
+    fetch("http://localhost:3000/api/posts")
+      .then((response) => response.json())
+      .then((data) => setPosts(data))
+      .catch((error) => console.error("Error loading posts:", error))
+  }, [])
+
+  const filteredPosts = posts.filter((post) =>
+    post.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    post.caption.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   return (
     <div className="feed-page">
@@ -22,6 +26,8 @@ useEffect(() => {
         className="feed-search"
         type="text"
         placeholder="Search posts..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
 
       <div className="feed-actions">
@@ -34,7 +40,7 @@ useEffect(() => {
         </Link>
       </div>
 
-      {posts.map((post) => (
+      {filteredPosts.map((post) => (
         <Post key={post.id} post={post} />
       ))}
     </div>
