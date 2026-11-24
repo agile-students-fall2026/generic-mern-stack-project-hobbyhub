@@ -4,6 +4,7 @@ import "./CreatePost.css"
 function CreatePost() {
   const [caption, setCaption] = useState("")
   const [selectedImage, setSelectedImage] = useState("")
+  const [linkedEvent, setLinkedEvent] = useState("")
 
   const handlePost = async () => {
     try {
@@ -15,7 +16,8 @@ function CreatePost() {
         body: JSON.stringify({
           username: "myapyke",
           caption: caption,
-          image: selectedImage
+          image: selectedImage,
+          linkedEvent: linkedEvent
         })
       })
 
@@ -28,6 +30,8 @@ function CreatePost() {
 
       setCaption("")
       setSelectedImage("")
+      setLinkedEvent("")
+      
     } catch (error) {
       console.error("Error creating post:", error)
     }
@@ -52,6 +56,17 @@ function CreatePost() {
         value={caption}
         onChange={(e) => setCaption(e.target.value)}
       />
+
+      <select
+        className="event-select"
+        value={linkedEvent}
+        onChange={(e) => setLinkedEvent(e.target.value)}
+      >
+        <option value="">Link an event (optional)</option>
+        <option value="pottery">Pottery Workshop</option>
+        <option value="pilates">Pilates Class</option>
+        <option value="climbing">Climbing Meetup</option>
+      </select>
 
       <button
         className="post-button"
