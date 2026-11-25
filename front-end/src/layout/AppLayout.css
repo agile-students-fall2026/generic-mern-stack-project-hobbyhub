@@ -20,6 +20,12 @@
   border-bottom: 1px solid #eeeeee;
 }
 
+.top-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .top-bar-brand {
   font-size: 20px;
   font-weight: bold;
@@ -33,6 +39,23 @@
   border-radius: 8px;
   color: #7164c7;
   text-decoration: none;
+}
+
+.top-bar-login {
+  padding: 8px 14px;
+  background-color: #7164c7;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.top-bar-login:hover {
+  background-color: #5e52ad;
 }
 
 .app-layout-content {
