@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 import "./MyHobbies.css"
 
 function MyHobbies() {
@@ -134,6 +135,10 @@ function MyHobbies() {
 
   return (
     <main className="my-activities">
+      <Link to="/profile" className="activities-back-link">
+        ← Back to Profile
+      </Link>
+
       <h1>My Hobbies</h1>
       <p>Manage your hobbies, events, and activities.</p>
 

@@ -49,6 +49,13 @@ const Profile = ({user}) => {
                   >
                     Edit Profile
                   </Link>
+                  
+                    <Link
+                    to="/my-hobbies"
+                    className="profile-activities-button"
+                  >
+                    My Activities
+                  </Link>
 
                   <section className="profile-posts">
                     <h2 className="profile-posts-title">Posts</h2>
