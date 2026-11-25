@@ -19,20 +19,24 @@ import AppLayout from "./layout/AppLayout"
 
 const App = () => {
   const[user, setUser] = useState(null)
-  const [isLoggedIn, setIsLoggedIn] = useState(
+  const [profileError, setProfileError] = useState(false)
+  const [isLoggedIn] = useState(
     () => sessionStorage.getItem("hobbyhubLoggedIn") === "true"
   )
   
   useEffect(() => {
-    fetch("https://randomuser.me/api/?seed=hobbyhub")
+    fetch("http://localhost:3000/api/profile")
       .then(response => {
         if(!response.ok){
-          throw new Error ("Failed to load profile")
+          throw new Error("Failed to load profile")
         }
         return response.json()
       })
-      .then(data => setUser(data.results[0]))
-      .catch(error => console.error(error))
+      .then(data => setUser(data))
+      .catch(error => {
+        console.error(error)
+        setProfileError(true)
+      })
     }, [])
   return(
     <Router>
@@ -41,11 +45,53 @@ const App = () => {
 
         <Route path="/login" element={<Login />} />
         <Route path="/create-account" element={<CreateAccount />} />
-        <Route path="/chat" element={isLoggedIn ? <Chat /> : <Navigate to="/login" replace />} />
-        <Route path="/profile/settings" element={!isLoggedIn ? <Navigate to="/login" replace /> : user ? <ProfileSettings user={user} onUpdateUser={setUser} /> : <p>Loading profile...</p>} />
+          
+        <Route path="/chat" 
+        element={
+          isLoggedIn ? (
+            <Chat />
+          ) : (
+            <Navigate to="/login" replace />
+           )
+         }
+       />
+        <Route
+          path="/profile/settings"
+          element={
+            !isLoggedIn ? (
+                <Navigate to="/login" replace />
+            ) : user ? (
+              <ProfileSettings 
+                user={user}
+                onUpdateUser={setUser} 
+              />
+            ) : (
+              <p>
+                {profileError
+                ? "Unable to load profile."
+                : "Loading profile..."}
+              </p>
+            )
+          }
+        />
         
-          <Route element={<AppLayout isLoggedIn={isLoggedIn} />}>
-          <Route path="/profile" element={!isLoggedIn ? <Navigate to="/login" replace /> : user ? <Profile user={user} /> : <p>Loading profile...</p>} />
+        <Route element={<AppLayout isLoggedIn={isLoggedIn} />}>
+          <Route
+            path="/profile"
+            element={
+                !isLoggedIn ? (
+                    <Navigate to="/login" replace />
+              ) : user ? (
+                <Profile user={user} /> 
+              ) : (
+               <p> 
+                {profileError
+                ? "Unable to load profile."
+                : "Loading profile..."}
+                </p>
+              )
+            }
+          />
           <Route path="/feed" element={<Feed />} />
           <Route path="/following" element={<Following />} />
           <Route path="/create-post"element={isLoggedIn ? <CreatePost /> : <Navigate to="/login" replace />}/>

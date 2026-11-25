@@ -9,43 +9,73 @@ const Chat = () => {
     const[message, setMessage] = useState("")
     const[loading, setLoading] = useState(true)
     const[error, setError] = useState(false)
+    const[sendError, setSendError] = useState("")
+    const[sending, setSending]=useState(false)
 
     useEffect(() =>{
-        fetch("https://dummyjson.com/comments?limit=8")
+        let active = true
+        fetch("http://localhost:3000/api/chats")
         .then(response => {
             if(!response.ok){
                 throw new Error("Unable to load chats")
             }
             return response.json()
         })
-        .then(data=>{
-            const chats = data.comments.map(comment => ({
-                id: comment.id,
-                name: comment.user.fullName,
-                username: comment.user.username,
-                messages: [
-                    {
-                        id: `received-${comment.id}`,
-                        text: comment.body,
-                        sentByMe: false,
-                    },
-                ],
-            }))
-            setConversations(chats)
+        .then(data => {
+            if(active){
+                setConversations(data)
+            }
         })
-        .catch(() => setError(true))
-        .finally(() => setLoading(false))}, [])
+        .catch(() => {
+            if (active) {
+                setError(true)
+            }
+        })
+        .finally(() => {
+            if(active) {
+                setLoading(false)
+            }
+        })
+        return() => {
+            active = false
+        }
+    }, [])
 
         const selectedChat = conversations.find(chat => chat.id === selectedID)
         const visibleChat = conversations.filter(chat => chat.name.toLowerCase().includes(search.toLowerCase()))
-        const openChat = id => {setSelectedID(id), setMessage("")}
-        const closeChat = () => {setSelectedID(null), setMessage("")}
-        const sendMessage = event => {
+        const openChat = id => {
+            setSelectedID(id) 
+            setMessage("")
+            setSendError("")
+        }
+        const closeChat = () => {
+            setSelectedID(null)
+            setMessage("")
+            setSendError("")
+        }
+        const sendMessage = async event => {
             event.preventDefault()
             const text = message.trim()
-            if(!text || !selectedChat){
+            if(!text || !selectedChat || sending){
                 return
             }
+            setSending(true)
+            setSendError("")
+            try{
+                const response = await fetch(
+                    `http://localhost:3000/api/chats/${selectedChat.id}/messages`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ text })
+                    }
+                )
+                const data = await response.json()
+                if(!response.ok){
+                    throw new Error(data.error || "Unable to send message")
+                }
             
         setConversations(previousConversations => 
             previousConversations.map(chat => {
@@ -54,12 +84,16 @@ const Chat = () => {
                 }
                 return{
                     ...chat,
-                    messages: [...chat.messages,{id: `sent-${chat.messages.length}`, text: text, sentByMe: true,},],
+                    messages: [...chat.messages, data],
                 }
             })
         )
         setMessage("")
-
+    } catch (error) {
+        setSendError(error.message)
+    } finally {
+        setSending(false)
+    }
     }
 
     return(
@@ -116,11 +150,16 @@ const Chat = () => {
                     <button
                         className="chat-send"
                         type="submit"
-                        disabled={!message.trim()}
+                        disabled={!message.trim() || sending}
                     >
-                        Send
+                        {sending ? "Sending..." : "Send"}
                     </button>
                 </form>
+                {sendError && (
+                    <p className="chat-status">
+                        {sendError}
+                    </p>
+                )}
                 </>
             ):(
                 <section className="chat-inbox">
