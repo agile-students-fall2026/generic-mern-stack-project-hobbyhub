@@ -20,7 +20,7 @@ import AppLayout from "./layout/AppLayout"
 const App = () => {
   const[user, setUser] = useState(null)
   const [profileError, setProfileError] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(
+  const [isLoggedIn] = useState(
     () => sessionStorage.getItem("hobbyhubLoggedIn") === "true"
   )
   
@@ -75,15 +75,15 @@ const App = () => {
           }
         />
         
-        <Route element={<AppLayout isLoggedIn={isLoggedIn />}>
+        <Route element={<AppLayout isLoggedIn={isLoggedIn} />}>
           <Route
             path="/profile"
             element={
                 !isLoggedIn ? (
                     <Navigate to="/login" replace />
-              ) : (
+              ) : user ? (
                 <Profile user={user} /> 
-            ) : (
+              ) : (
                <p> 
                 {profileError
                 ? "Unable to load profile."
