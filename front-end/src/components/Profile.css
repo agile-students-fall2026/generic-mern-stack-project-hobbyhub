@@ -87,7 +87,7 @@
 
 .profile-edit-button{
     display: block;
-    margin: 24px 0 40px;
+    margin: 24px 0 0;
     padding: 13px;
     border: 1px solid #7164c7;
     border-radius: 8px;
@@ -159,4 +159,21 @@
     color: #7164c7;
     border-radius: 8px;
     font-size: 14px;
+}
+
+.profile-activities-button {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 32px;
+  padding: 12px;
+  background-color: #7164c7;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.profile-activities-button:hover {
+  background-color: #5e52ad;
 }
