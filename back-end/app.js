@@ -6,6 +6,7 @@ import postsRouter from "./routes/posts.js"
 import followingRouter from "./routes/following.js"
 import chatRoutes from "./routes/chat.js"
 import myHobbiesRoutes from "./routes/myHobbies.js"
+import authRoutes from "./routes/auth.js"
 
 const app = express()
 
@@ -20,6 +21,7 @@ app.use("/api/posts", postsRouter)
 app.use("/api/following", followingRouter)
 app.use("/api", chatRoutes)
 app.use("/api", myHobbiesRoutes)
+app.use("/api", authRoutes)
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" })
