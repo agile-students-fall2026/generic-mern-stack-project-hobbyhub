@@ -248,3 +248,16 @@
   color: #1f2a44;
   font-size: 14px;
 }
+
+.activities-back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: #7164c7;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.activities-back-link:hover {
+  text-decoration: underline;
+}

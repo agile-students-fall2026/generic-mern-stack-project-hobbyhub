@@ -7,7 +7,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
 
@@ -16,8 +16,27 @@ function Login() {
       return;
     }
 
-    // Authentication will be connected to the backend later.
-    setError("Login is not available yet. Please try again later.");
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Login failed.");
+        return;
+      }
+
+      sessionStorage.setItem("hobbyhubLoggedIn", "true");
+      window.location.href = "/feed";
+    } catch (error) {
+      setError("Unable to connect to the server. Please try again.");
+    }
   };
 
   return (
