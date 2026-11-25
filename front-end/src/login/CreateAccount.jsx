@@ -9,7 +9,7 @@ function CreateAccount() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
 
@@ -33,9 +33,28 @@ function CreateAccount() {
       return;
     }
 
-    // Account creation will be connected to the backend later.
-    setError("Account creation is not available yet. Please try again later.");
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Account creation failed.");
+        return;
+      }
+
+      window.location.href = "/login";
+    } catch (error) {
+      setError("Unable to connect to the server. Please try again.");
+    }
   };
+
 
   return (
     <main className="create-account-page">

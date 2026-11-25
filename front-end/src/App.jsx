@@ -19,6 +19,10 @@ import AppLayout from "./layout/AppLayout"
 
 const App = () => {
   const[user, setUser] = useState(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => sessionStorage.getItem("hobbyhubLoggedIn") === "true"
+  )
+  
   useEffect(() => {
     fetch("https://randomuser.me/api/?seed=hobbyhub")
       .then(response => {
@@ -33,36 +37,24 @@ const App = () => {
   return(
     <Router>
             <Routes>
-        <Route path="/" element={<Navigate to="/profile" replace />} />
+        <Route path="/" element={<Navigate to={isLoggedIn ? "/feed" : "/login"} replace />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/create-account" element={<CreateAccount />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route
-          path="/profile/settings"
-          element={
-            user ? (
-              <ProfileSettings user={user} onUpdateUser={setUser} />
-            ) : (
-              <p>Loading profile...</p>
-            )
-          }
-        />
+        <Route path="/chat" element={isLoggedIn ? <Chat /> : <Navigate to="/login" replace />} />
+        <Route path="/profile/settings" element={!isLoggedIn ? <Navigate to="/login" replace /> : user ? <ProfileSettings user={user} onUpdateUser={setUser} /> : <p>Loading profile...</p>} />
         
-        <Route element={<AppLayout />}>
-          <Route
-            path="/profile"
-            element={user ? <Profile user={user} /> : <p> Loading profile...</p>}
-          />
+          <Route element={<AppLayout isLoggedIn={isLoggedIn} />}>
+          <Route path="/profile" element={!isLoggedIn ? <Navigate to="/login" replace /> : user ? <Profile user={user} /> : <p>Loading profile...</p>} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/following" element={<Following />} />
-          <Route path="/create-post" element={<CreatePost />} />
-          <Route path="/create-event" element={<CreateEvent />} />
+          <Route path="/create-post"element={isLoggedIn ? <CreatePost /> : <Navigate to="/login" replace />}/>
+          <Route path="/create-event" element={isLoggedIn ? <CreateEvent /> : <Navigate to="/login" replace />} />
           <Route path="/discover" element={<Discover />} />
           <Route path="/hobbies/:id" element={<HobbyDetail />} />
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/map" element={<Map />} />
-          <Route path="/my-hobbies" element={<MyHobbies />} />
+          <Route path="/my-hobbies" element={isLoggedIn ? <MyHobbies /> : <Navigate to="/login" replace />} />
         </Route>
       </Routes>
     </Router>

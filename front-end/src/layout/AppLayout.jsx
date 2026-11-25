@@ -3,10 +3,10 @@ import TopBar from "./TopBar"
 import BottomNav from "./BottomNav"
 import "./AppLayout.css"
 
-const AppLayout = () => {
+const AppLayout = ({ isLoggedIn }) => {
   return (
     <div className="app-layout">
-      <TopBar />
+      <TopBar isLoggedIn={isLoggedIn} />
       <div className="app-layout-content">
         <Outlet />
       </div>
