@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
@@ -16,9 +14,21 @@ const eventCoordinates = {
 function Map() {
   const [events, setEvents] = useState([]);
   const [filter, setFilter] = useState("all");
+  const [error, setError] = useState("");
+  const filteredEvents = events.filter((event) => {
+    if (filter === "now") {
+      return event.day === "Today";
+    }
+
+    if (filter === "upcoming") {
+      return event.day !== "Today";
+    }
+
+    return true;
+  });  
 
   useEffect(() => {
-    fetch("/mock/events.json")
+    fetch("/api/map/events")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to load events");
@@ -31,6 +41,7 @@ function Map() {
       })
       .catch((error) => {
         console.error(error);
+        setError("Unable to load events. Please try again later.");
       });
   }, []);
 
@@ -73,7 +84,7 @@ function Map() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {events.map((event) => {
+        {filteredEvents.map((event) => {
           const position = eventCoordinates[event.location];
 
           if (!position) {
