@@ -4,7 +4,7 @@ import app from "../app.js"
 
 describe("Map API", () => {
   it("should return all events", async () => {
-    const res = await request(app).get("/api/map/events")
+    const res = await request(app).get("/api/events")
 
     expect(res.status).to.equal(200)
     expect(res.body).to.be.an("array")
@@ -12,7 +12,7 @@ describe("Map API", () => {
   })
 
   it("should return events with map information", async () => {
-    const res = await request(app).get("/api/map/events")
+    const res = await request(app).get("/api/events")
 
     res.body.forEach((event) => {
       expect(event).to.have.property("id")
