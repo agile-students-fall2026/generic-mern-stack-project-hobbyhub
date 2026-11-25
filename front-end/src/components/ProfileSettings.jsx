@@ -1,6 +1,7 @@
 import{useState} from "react"
 import {Link} from "react-router-dom"
 import "./ProfileSettings.css"
+const API_BASE = "http://localhost:3000"
 
 const ProfileSettings = ({user, onUpdateUser}) => {
     const[activeSection, setActiveSection] = useState(null)
@@ -10,71 +11,124 @@ const ProfileSettings = ({user, onUpdateUser}) => {
     const[hobby, setHobby] = useState("")
     const[pictureLoading, setPictureLoading] = useState(false)
     const[pictureError, setPictureError] = useState("")
+    const[settingsError, setSettingsError] = useState("")
+    const[pictureFile, setPictureFile] = useState(null)
 
     const hobbies = user.hobbies || [] 
     const privacy = user.privacy || "public"
+    const pictureSrc = user.picture.large.startsWith("/")
+        ? `${API_BASE}${user.picture.large}`
+        : user.picture.large
     
-    const privacyEdit = event => {
-        onUpdateUser(previousUser => ({
-            ...previousUser,
-            privacy: event.target.value,
-        }))
-    }
-    
-    const profileSave = event => {
-        event.preventDefault()
-        onUpdateUser(previousUser => ({
-            ...previousUser,
-            name: {
-                ...previousUser.name,
-                first: firstName.trim(),
-                last: lastName.trim(),
-            },
-            login: {
-                ...previousUser.login,
-                username: username.trim(),
-            },
-        }))
-        setActiveSection(null)
-    }
+    const updateProfile = async(url, method, body) => {
+        const options = {
+            method: method,
+        }
 
-    const addHobby = event => {
-        event.preventDefault()
-        const newHobby = hobby.trim()
-        if(!newHobby||hobbies.includes(newHobby)){
-                return
+        if(body !== undefined){
+            options.headers = {
+                "Content-Type": "application/json",
             }
-            onUpdateUser(previousUser => ({
-                ...previousUser,
-                hobbies: [...(previousUser.hobbies || []), newHobby],
-            }))
-            setHobby("")
+            options.body = JSON.stringify(body)
+        }
+        const response = await fetch(`${API_BASE}${url}`, options)
+        const data = await response.json()
+        if(!response.ok){
+            throw new Error(data.error || "Unable to save changes")
+        }
+        onUpdateUser(data)
+        return data
     }
 
-    const removeHobby = hobbyToRemove => {
-        onUpdateUser(previousUser => ({
-            ...previousUser,
-            hobbies: (previousUser.hobbies||[]).filter(
-                item => item !== hobbyToRemove
-            ),
-        }))
+    const privacyEdit = async event => {
+        const selectedPrivacy = event.target.value
+        setSettingsError("")
+        try{
+            await updateProfile(
+                "/api/profile/privacy",
+                "POST",
+                { privacy: selectedPrivacy }
+            )
+        } catch (error) {
+            setSettingsError(error.message)
+        }
+    }
+    
+    const profileSave = async event => {
+        event.preventDefault()
+        setSettingsError("")
+        try{
+            await updateProfile(
+                "/api/profile/edit",
+                "POST",
+                {
+                    firstName: firstName.trim(),
+                    lastName: lastName.trim(),
+                    username: username.trim(),
+                }
+            )
+            setActiveSection(null)
+        } catch (error){
+            setSettingsError(error.message)
+        }
+    }
+
+    const addHobby = async event => {
+        event.preventDefault()
+        setSettingsError("")
+        const newHobby = hobby.trim()
+        if(!newHobby){
+            setSettingsError("Please enter a hobby")
+            return
+        }
+        try{
+            await updateProfile(
+                "/api/profile/hobbies",
+                "POST",
+                {hobby: newHobby}
+            )
+            setHobby("")
+        } catch (error) {
+            setSettingsError(error.message)
+        }
+    }
+
+    const removeHobby = async hobbyToRemove => {
+        setSettingsError("")
+        try{
+            await updateProfile(
+                `/api/profile/hobbies/${encodeURIComponent(hobbyToRemove)}`,
+                "DELETE"
+            )
+        } catch (error){
+            setSettingsError(error.message)
+        }
     }
 
     const picChange = async () => {
+        if(!pictureFile){
+            setPictureError("Please choose an image")
+            return
+        }
         setPictureLoading(true)
         setPictureError("")
         try{
-            const response = await fetch ("https://randomuser.me/api/")
-            if(!response.ok){
-                throw new Error("Failed to load picture")
-            }
+            const formData = new FormData()
+            formData.append("picture", pictureFile)
+            const response = await fetch(
+                `${API_BASE}/api/profile/picture`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            )
             const data = await response.json()
-            onUpdateUser(previousUser => ({
-                ...previousUser,
-                picture: data.results[0].picture,
-            }))
-        } catch {
-            setPictureError("Cannot change picture now. Try again later.")
+            if(!response.ok){
+                throw new Error(data.error || "Unable to upload picture")
+            }
+            onUpdateUser(data)
+        } catch (error) {
+            setPictureError(error.message)
         } finally {
             setPictureLoading(false)
         }
@@ -90,6 +144,11 @@ const ProfileSettings = ({user, onUpdateUser}) => {
             </header>
 
             <div className="settings-content">
+                {settingsError && (
+                    <p className="settings-error">
+                        {settingsError}
+                    </p>
+                )}
                 <fieldset className="settings-privacy">
                     <legend className="settings-section-title">Privacy</legend>
                     <label className="settings-privacy-option">
@@ -232,16 +291,28 @@ const ProfileSettings = ({user, onUpdateUser}) => {
                         </h2>
                         <img
                             className="settings-profile-picture"
-                            src={user.picture.large}
+                            src={pictureSrc}
                             alt="Current profile"
+                        />
+                        <label className="settings-label" htmlFor="profile-picture-file">
+                            Choose a new profile picture
+                        </label>
+                        <input
+                            id="profile-picture-file"
+                            className="settings-input"
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            onChange={event => {
+                                setPictureFile(event.target.files[0] || null)
+                            }}
                         />
                         <button
                             className="settings-save-button"
                             type="button"
                             onClick={picChange}
-                            disabled={pictureLoading}
+                            disabled={pictureLoading || !pictureFile}
                         >
-                            {pictureLoading ? "Loading..." : "Generate New Picture"}
+                            {pictureLoading ? "Loading..." : "Upload Picture"}
                         </button>
                         {pictureError && (
                             <p className="settings-error">{pictureError}</p>

@@ -19,16 +19,20 @@ import AppLayout from "./layout/AppLayout"
 
 const App = () => {
   const[user, setUser] = useState(null)
+  const [profileError, setProfileError] = useState(false)
   useEffect(() => {
-    fetch("https://randomuser.me/api/?seed=hobbyhub")
+    fetch("http://localhost:3000/api/profile")
       .then(response => {
         if(!response.ok){
-          throw new Error ("Failed to load profile")
+          throw new Error("Failed to load profile")
         }
         return response.json()
       })
-      .then(data => setUser(data.results[0]))
-      .catch(error => console.error(error))
+      .then(data => setUser(data))
+      .catch(error => {
+        console.error(error)
+        setProfileError(true)
+      })
     }, [])
   return(
     <Router>
@@ -42,9 +46,16 @@ const App = () => {
           path="/profile/settings"
           element={
             user ? (
-              <ProfileSettings user={user} onUpdateUser={setUser} />
+              <ProfileSettings 
+                user={user}
+                onUpdateUser={setUser} 
+              />
             ) : (
-              <p>Loading profile...</p>
+              <p>
+                {profileError
+                ? "Unable to load profile."
+                : "Loading profile..."}
+              </p>
             )
           }
         />
@@ -52,7 +63,17 @@ const App = () => {
         <Route element={<AppLayout />}>
           <Route
             path="/profile"
-            element={user ? <Profile user={user} /> : <p> Loading profile...</p>}
+            element={
+              user ? (
+                <Profile user={user} /> 
+            ) : (
+               <p> 
+                {profileError
+                ? "Unable to load profile."
+                : "Loading profile..."}
+                </p>
+              )
+            }
           />
           <Route path="/feed" element={<Feed />} />
           <Route path="/following" element={<Following />} />

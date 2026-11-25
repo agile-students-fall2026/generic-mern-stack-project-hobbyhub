@@ -4,6 +4,9 @@ import "./Profile.css"
 const postID = [1,2,3,4,5,6]
 const Profile = ({user}) => {
     const fullName = `${user.name.first} ${user.name.last}`
+    const pictureSrc = user.picture.large.startsWith("/")
+    ? `http://localhost:3000${user.picture.large}`
+    : user.picture.large
     
     return (
         <main className = "profile-page">
@@ -12,7 +15,7 @@ const Profile = ({user}) => {
                 <div className ="profile-top">
                     <img
                       className="profile-picture"
-                      src={user.picture.large}
+                      src={pictureSrc}
                       alt={`${fullName}'s profile`}
                       />
                       <Link
